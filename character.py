@@ -1,5 +1,6 @@
-# Object-oriented game simulator
-# Turid Torheim, NMBU, 2026
+# Character module for the battle simulator (Deliverable 3, INF201)
+# Based on game_simulator_v1.py by Turid Torheim, NMBU, 2026
+# Updated by Zuzanna Magdalena Smolinska and Sondre Aasheim
 
 class Character:
     """Represents a character in the RPG"""
