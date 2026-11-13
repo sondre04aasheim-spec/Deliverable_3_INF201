@@ -1,6 +1,6 @@
 # Character module for the battle simulator (Deliverable 3, INF201)
 # Based on game_simulator_v1.py by Turid Torheim, NMBU, 2026
-# Updated by Zuzanna Magdalena Smolinska and Sondre Aasheim
+# Zuzanna Magdalena Smolinska and Sondre Aasheim (updated by)
 
 from items import Weapon        # characters can hold a weapon
 
