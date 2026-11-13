@@ -17,7 +17,6 @@ class Character:
         damage: base damage when attacking without a weapon (default is 10)
         weapon: an optional weapon (default is None, meaning no weapon)
         """
-        
         self.name = name
         self._hp = hp_max                   # the character starts with full HP
         self.hp_max = hp_max
