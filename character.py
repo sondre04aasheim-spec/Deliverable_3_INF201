@@ -22,15 +22,23 @@ class Character:
         self.hp_max = hp_max
         self.damage = damage
         self.weapon = weapon
-
+    
     def attack(self, target: "Character") -> None:       # using quotes as Character is not fully defined yet
         """
         This method is called when the character attacks another character.
         The target takes care of its own HP by calling its take_damage() method.
 
+        The damage comes from the weapon if the character has one, otherwise from the base damage.
+
         target: the character being attacked
         """
-        target.take_damage(self.damage)                  # let the target handle its own damage
+
+        if self.weapon is not None:
+            damage = self.weapon.roll_damage()           # with a weapon: roll the weapon's dice to decide the damage
+        else:
+            damage = self.damage                         # without a weapon: use the base damage
+
+        target.take_damage(damage)                       # let the target handle its own damage
 
     def take_damage(self, damage: int) -> int:
         """ 
@@ -87,3 +95,59 @@ class Character:
     def is_alive(self) -> bool:
         """Returns True if the character is alive (HP > 0), False otherwise."""
         return self._hp > 0
+
+
+class Warrior(Character):
+    """A defensive character whose armor reduces incoming damage."""
+
+    def __init__(self, name: str, hp_max: int = 100, damage: int = 10, weapon: Weapon | None = None, armor: int = 5) -> None:
+        """
+        Creating a warrior character.
+
+        armor: how much of each attack is blocked (default is 5)
+        (the other parameters are the same as for Character)
+        """
+        super().__init__(name, hp_max, damage, weapon)
+        self.armor = armor
+
+    def take_damage(self, damage: int) -> int:
+        """
+        Reducing the incoming damage by the armor before it is taken from the HP.
+
+        damage: how much damage the attack deals before armor
+        returns: the warrior's HP after the hit
+        """
+        reduced_damage = max(0, damage - self.armor)        # armor cannot turn damage into healing
+        return super().take_damage(reduced_damage)          # Character.take_damage handles the HP rules
+
+
+class Mage(Character):
+    """A magic character whose spells cost mana."""
+
+    def __init__(self, name: str, hp_max: int = 100, damage: int = 10, weapon: Weapon | None = None, mana: int = 30, mana_max: int = 30) -> None:
+        """
+        Creating a mage, with or without a weapon.
+
+        mana: how much mana the mage starts with (default is 30)
+        mana_max: the most mana the mage can have (default is 30)
+        """
+        super().__init__(name, hp_max, damage, weapon)
+        self.mana_max = mana_max
+        self.mana = min(mana, mana_max)                         # mana cannot start above the max
+
+    def attack(self, target: "Character") -> None:
+        """
+        Attacking with a spell if there is enough mana, otherwise with a normal attack.
+        """
+        
+        if self.mana >= 10:                                     # checking if the mage has at least 10 mana to cast a spell
+            # enough mana: cast a spell that deals double base damage (no weapon)
+
+            self.mana -= 10                                     # losing 10 mana for the spell
+            print(f"{self.name} casts a spell! ({self.mana} mana left)")
+            target.take_damage(self.damage * 2)                 # base damage is doubled for the spell, and the target handles its own HP
+        else:
+            # not enough mana: normal attack (with weapon if there is one), and regain 5 mana
+
+            super().attack(target)
+            self.mana = min(self.mana + 5, self.mana_max)       # mana cannot go above the max
